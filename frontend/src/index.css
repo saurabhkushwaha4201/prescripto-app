@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+/* Global font */
+* {
+  font-family: Outfit;
+}
+
+/* Define theme variables */
+@theme {
+  --color-primary: #5F6FFF;
+}
+
+/* Active link underline */
+.active hr {
+  @apply block;
+}
+
+/* Hide scrollbar */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mobile styles */
+@media (max-width: 740px) {
+  .active p {
+    @apply text-white;
+    background-color: var(--color-primary);
+  }
+}
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  animation: gradient 12s ease infinite;
+}
+
