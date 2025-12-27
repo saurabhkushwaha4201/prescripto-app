@@ -3,8 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import { assets } from "../assets/assets";
 import RelatedDoctors from "../components/RelatedDoctors";
-// import { toast } from "react-toastify";
-// import axios from "axios";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const Appointment = () => {
   const { docId } = useParams();
@@ -18,7 +18,7 @@ const Appointment = () => {
   const [docSlots, setDocSlots] = useState([]);
   const [slotIndex, setSlotIndex] = useState(0);
   const [slotTime, setSlotTime] = useState("");
-
+  
   const fetchDocInfo = async () => {
     const docInfo = doctors.find((doc) => doc._id === docId);
     setDocInfo(docInfo);
@@ -88,38 +88,39 @@ const Appointment = () => {
     }
   };
 
-//   const bookAppointment = async () => {
-//     if (!token) {
-//       toast.warn("Login to book appointment");
-//       return navigate("/login");
-//     }
+  const bookAppointment = async () => {
+    if (!token) {
+      toast.warn("Login to book appointment");
+      return navigate("/login");
+    }
 
-//     try {
-//       const date = docSlots[slotIndex][0].datetime;
+    try {
+      const date = docSlots[slotIndex][0].datetime;
 
-//       let day = date.getDate();
-//       let month = date.getMonth() + 1;
-//       let year = date.getFullYear();
+      let day = date.getDate();
+      let month = date.getMonth() + 1;
+      let year = date.getFullYear();
 
-//       const slotDate = day + "_" + month + "_" + year;
+      const slotDate = day + "_" + month + "_" + year;
 
-//       const { data } = await axios.post(
-//         backendUrl + "/api/user/book-appointment",
-//         { docId, slotDate, slotTime },
-//         { headers: { token } }
-//       );
-//       if (data.success) {
-//         toast.success(data.message);
-//         getDoctorsData();
-//         navigate("/my-appointments");
-//       } else {
-//         toast.error(data.message);
-//       }
-//     } catch (error) {
-//       console.log(error);
-//       toast.error(error.message);
-//     }
-//   };
+      const { data } = await axios.post(
+        backendUrl + "/api/user/bookAppointment",
+        { docId, slotDate, slotTime },
+        { headers: { token } }
+      );
+ 
+      if (data.success) {
+        toast.success(data.message);
+        getDoctorsData();
+        navigate("/myAppointments");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
 
   useEffect(() => {
     fetchDocInfo();
@@ -127,7 +128,7 @@ const Appointment = () => {
 
   useEffect(() => {
     getAvailableSlots();
-  }, [docInfo]);
+  }, [docInfo]  );
 
   useEffect(() => {
     console.log(docSlots);
