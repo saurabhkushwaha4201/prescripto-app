@@ -16,13 +16,43 @@ const MyAppointment = () => {
     setShowModal(true);
   };
 
-  // Triggered when user clicks "Yes, Cancel" inside the modal
-  const confirmDeletion = () => {
-    const updatedList = localAppointments.filter(item => item._id !== targetId);
-    setLocalAppointments(updatedList);
-    setShowModal(false);
-    setTargetId(null);
+  const confirmDeletion = async () => {
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/user/appointments/${selectedAppointmentId}/cancel`,
+        {},
+        { headers: { token } }
+      );
+      if (data.success) {
+        toast.success('Appointment cancelled successfully');
+        setAppointments(appointments.filter(a => a._id !== selectedAppointmentId));
+        setShowModal(false);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to cancel appointment');
+    }
   };
+  const cancelAppointment = async(appointmentId) => {
+    try{
+      console.log(appointmentId);
+      const {data} = await axios.post(backendUrl + '/api/user/cancelAppointment',{appointmentId},{headers:{token}});
+      if(data.success){
+        toast.success(data.message);
+        getUserAppointments();
+      }
+    }
+    catch(error){
+      toast.error(error.response?.data?.message || 'Failed to cancel appointment');
+    }
+  };
+  useEffect(() => {
+    if (token) {
+      getUserAppointments();
+    }
+  }, [token]);
+
+  if (loading) return <div className="text-center p-8">Loading...</div>;
+  if (appointments.length === 0) return <div className="text-center p-8 text-gray-500">No appointments found</div>;
 
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6 relative">
