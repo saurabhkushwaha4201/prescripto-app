@@ -2,27 +2,25 @@ import React, { useState, useContext, useEffect } from "react";
 import { AppContext } from "../context/AppContext";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Lock, User, Eye, EyeOff, UserCheck, Zap, CheckCircle2, Globe, ArrowRight } from "lucide-react";
+import { Mail, Lock, User, Eye, EyeOff, ShieldCheck, Clock, CheckCircle, ChevronRight, Loader2 } from "lucide-react";
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const strengthLabels = ["Critical", "Weak", "Fair", "Strong", "Excellent"];
-const strengthColors = ["bg-red-400", "bg-orange-400", "bg-yellow-400", "bg-cyan-400", "bg-gradient-to-r from-cyan-500 to-violet-500"];
+const strengthColors = ["bg-red-500", "bg-orange-500", "bg-yellow-500", "bg-emerald-500", "bg-indigo-600"];
 
 const Login = () => {
   const { backendUrl, token, setToken } = useContext(AppContext);
   const navigate = useNavigate();
 
-  // Mode: "Sign Up" or "Login"
-  const [mode, setMode] = useState("Sign Up"); 
+  const [mode, setMode] = useState("Login"); 
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   
-  // Form States
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
 
-  // Password Strength Logic
   const estimateStrength = (pw) => {
     let s = 0;
     if (pw.length > 7) s++;
@@ -34,232 +32,186 @@ const Login = () => {
 
   const pwScore = estimateStrength(password);
 
-  const handleDemoLogin = () => {
-    setMode("Login"); 
-    setEmail("guest@example.com");
-    setPassword("12345678");
-    toast.info("Demo credentials loaded! Click Sign In.");
-  };
-
   const onSubmitHandler = async (event) => {
     event.preventDefault();
+    setLoading(true);
     try {
-      if (mode === 'Sign Up') {
-        // REGISTER LOGIC
-        const { data } = await axios.post(backendUrl + '/api/user/register', { name, email, password });
-        if (data.success) {
-          localStorage.setItem('token', data.token);
-          setToken(data.token);
-          toast.success("Account created successfully!");
-        } else {
-          toast.error(data.message);
-        }
+      const endpoint = mode === 'Sign Up' ? '/api/user/register' : '/api/user/login';
+      const payload = mode === 'Sign Up' ? { name, email, password } : { email, password };
+      
+      const { data } = await axios.post(backendUrl + endpoint, payload);
+      
+      if (data.success) {
+        localStorage.setItem('token', data.token);
+        setToken(data.token);
+        toast.success(mode === 'Sign Up' ? "Account created!" : "Welcome back");
       } else {
-        // LOGIN LOGIC
-        const { data } = await axios.post(backendUrl + '/api/user/login', { email, password });
-        if (data.success) {
-          localStorage.setItem('token', data.token);
-          setToken(data.token);
-          toast.success("Welcome back!");
-        } else {
-          toast.error(data.message);
-        }
+        toast.error(data.message);
       }
     } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || error.message);
+      toast.error(error.response?.data?.message || "Authentication failed");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Redirect if logged in
   useEffect(() => {
-    if (token) {
-      navigate('/');
-    }
+    if (token) navigate('/');
   }, [token, navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-slate-50">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 dark:bg-slate-950 transition-colors duration-300 font-sans">
       
-      {/* MESH BACKGROUND */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-cyan-300/30 rounded-full blur-[120px] animate-blob" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-violet-300/30 rounded-full blur-[120px] animate-blob animation-delay-2000" />
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative z-10 w-full max-w-5xl bg-white rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(6,182,212,0.15)] border border-slate-100 overflow-hidden flex flex-col md:flex-row min-h-[650px]"
-      >
-        {/* LEFT SIDE: INFO PANEL */}
-        <div className="md:w-5/12 bg-gradient-to-br from-cyan-500 to-violet-600 p-12 text-white flex flex-col justify-between relative overflow-hidden">
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-soft-light"></div>
-          
-          <div className="relative z-10">
-            <div onClick={() => navigate('/')} className="flex items-center gap-3 mb-16 cursor-pointer">
-              <div className="p-2.5 bg-white/20 backdrop-blur-md rounded-xl shadow-inner-white">
-                <Zap className="w-6 h-6 fill-white text-white" />
+      <div className="w-full max-w-5xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl shadow-slate-200/50 dark:shadow-none overflow-hidden flex flex-col md:flex-row border border-slate-100 dark:border-slate-800">
+        
+        {/* Left Side: Brand & Trust */}
+        <div className="md:w-1/2 bg-indigo-600 dark:bg-indigo-700 p-10 md:p-16 text-white flex flex-col justify-between">
+          <div>
+            <div onClick={() => navigate('/')} className="flex items-center gap-2 mb-12 cursor-pointer group">
+              <div className="p-2 bg-white/10 rounded-lg group-hover:bg-white/20 transition-all">
+                <ShieldCheck className="w-6 h-6 text-white" />
               </div>
               <span className="text-xl font-bold tracking-tight uppercase">Prescripto</span>
             </div>
 
-            <h2 className="text-4xl font-extrabold leading-tight mb-8 tracking-tight">
-              Healthcare <br />
-              <span className="text-cyan-200 drop-shadow-sm">reimagined.</span>
+            <h2 className="text-4xl font-bold leading-tight mb-6">
+              Modern healthcare <br /> starts here.
             </h2>
+            <p className="text-indigo-100 mb-10 max-w-sm leading-relaxed">
+              Join thousands of patients managing their health with secure, real-time doctor appointments.
+            </p>
 
-            <div className="space-y-5">
+            <div className="space-y-6">
               {[
-                { icon: CheckCircle2, text: "Encrypted Cloud Health Data" },
-                { icon: Globe, text: "24/7 Specialist Network" },
-                { icon: Zap, text: "Real-time Appointment Sync" }
+                { icon: CheckCircle, title: "Verified Specialists", desc: "Access to top-tier medical professionals." },
+                { icon: Clock, title: "Instant Booking", desc: "Skip the queue with real-time slot selection." }
               ].map((item, i) => (
-                <div key={i} className="flex items-center gap-4 group">
-                  <div className="p-1.5 rounded-full bg-white/10 group-hover:bg-white/30 transition-colors">
-                     <item.icon className="w-5 h-5 text-cyan-100" />
+                <div key={i} className="flex gap-4">
+                  <item.icon className="w-6 h-6 text-indigo-300 shrink-0" />
+                  <div>
+                    <h4 className="font-bold text-white">{item.title}</h4>
+                    <p className="text-indigo-200 text-sm">{item.desc}</p>
                   </div>
-                  <span className="text-white/90 font-medium">{item.text}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <button
-            onClick={() => setMode(mode === "Login" ? "Sign Up" : "Login")}
-            className="relative z-10 w-fit mt-12 px-6 py-3 bg-white/10 hover:bg-white/25 border border-white/20 backdrop-blur-md rounded-2xl font-semibold transition-all duration-300 flex items-center gap-2 hover:shadow-lg hover:shadow-white/10 hover:-translate-y-0.5"
-          >
-            {mode === "Login" ? "Create an account" : "Already a member?"}
-            <ArrowRight className="w-4 h-4" />
-          </button>
+          <div className="mt-12 pt-8 border-t border-indigo-500/50">
+             <p className="text-indigo-200 text-sm">Need help? <span className="text-white font-medium cursor-pointer underline">Contact Support</span></p>
+          </div>
         </div>
 
-        {/* RIGHT SIDE: FORM */}
-        <div className="md:w-7/12 p-12 md:p-16 flex flex-col justify-center bg-white">
-          <div className="max-w-md mx-auto w-full">
-            <header className="mb-10">
-              <h3 className="text-3xl font-black text-gray-800 mb-2 tracking-tight">
-                {mode === "Login" ? "Welcome back!" : "Create account"}
+        {/* Right Side: Form */}
+        <div className="md:w-1/2 p-10 md:p-16 flex flex-col justify-center">
+          <div className="max-w-sm mx-auto w-full">
+            <header className="mb-8">
+              <h3 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+                {mode === "Login" ? "Sign In" : "Create Account"}
               </h3>
-              <p className="text-gray-500 font-medium">Simplify your medical journey today.</p>
+              <p className="text-slate-500 dark:text-slate-400">
+                {mode === "Login" ? "Welcome back to your health portal." : "Start your medical journey with us today."}
+              </p>
             </header>
 
-            <form className="space-y-5" onSubmit={onSubmitHandler}>
+            <form onSubmit={onSubmitHandler} className="space-y-5">
               <AnimatePresence mode="wait">
                 {mode === "Sign Up" && (
-                  <motion.div 
-                    key="name-field"
-                    initial={{ opacity: 0, height: 0 }} 
-                    animate={{ opacity: 1, height: 'auto' }} 
-                    exit={{ opacity: 0, height: 0 }}
-                    className="overflow-hidden"
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="space-y-2"
                   >
-                    <label className="text-xs font-bold uppercase tracking-widest text-cyan-600 mb-2 block">Full Name</label>
-                    <div className="relative group">
-                      <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-cyan-500 transition-colors" />
-                      <input
-                        type="text"
-                        placeholder="John Doe" 
-                        onChange={(e) => setName(e.target.value)} 
-                        value={name} 
-                        required={mode === "Sign Up"}
-                        className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:bg-white focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100/50 outline-none transition-all duration-300"
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 ml-1">Full Name</label>
+                    <div className="relative">
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                      <input 
+                        type="text" 
+                        required 
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="John Doe"
+                        className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all dark:text-white"
                       />
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              <div>
-                <label className="text-xs font-bold uppercase tracking-widest text-cyan-600 mb-2 block">Email Address</label>
-                <div className="relative group">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-cyan-500 transition-colors" />
-                  <input
-                    type="email"
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 ml-1">Email Address</label>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <input 
+                    type="email" 
+                    required 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="saurabh@example.com"
-                    required
-                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:bg-white focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100/50 outline-none transition-all duration-300"
+                    placeholder="name@email.com"
+                    className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all dark:text-white"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="text-xs font-bold uppercase tracking-widest text-cyan-600 mb-2 block">Password</label>
-                <div className="relative group">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-cyan-500 transition-colors" />
-                  <input
-                    type={showPassword ? "text" : "password"}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 ml-1">Password</label>
+                  {mode === "Login" && <span className="text-xs text-indigo-600 font-bold cursor-pointer hover:underline">Forgot?</span>}
+                </div>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <input 
+                    type={showPassword ? "text" : "password"} 
+                    required 
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    required
-                    className="w-full pl-12 pr-12 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:bg-white focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100/50 outline-none transition-all duration-300"
+                    className="w-full pl-12 pr-12 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all dark:text-white"
                   />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-cyan-600">
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600">
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
-
-                {password && (
-                  <div className="mt-4">
-                    <div className="flex justify-between text-[10px] font-bold uppercase mb-2">
-                      <span className="text-gray-400">Security Strength:</span>
-                      <span className="text-cyan-600">{strengthLabels[pwScore]}</span>
+                
+                {mode === "Sign Up" && password && (
+                  <div className="pt-2 px-1">
+                    <div className="flex justify-between text-[10px] font-black uppercase mb-1.5 tracking-tighter">
+                      <span className="text-slate-400">Security</span>
+                      <span className={strengthColors[pwScore].replace('bg-', 'text-')}>{strengthLabels[pwScore]}</span>
                     </div>
-                    <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden flex gap-1 p-0.5">
+                    <div className="h-1 w-full bg-slate-100 dark:bg-slate-800 rounded-full flex gap-1">
                       {[...Array(4)].map((_, i) => (
-                        <div key={i} className={`h-full flex-1 rounded-full transition-all duration-500 ${i < pwScore ? strengthColors[pwScore] : 'bg-slate-200'}`} />
+                        <div key={i} className={`h-full flex-1 rounded-full transition-all duration-500 ${i < pwScore ? strengthColors[pwScore] : 'bg-slate-200 dark:bg-slate-700'}`} />
                       ))}
                     </div>
                   </div>
                 )}
               </div>
 
-              <div className="pt-4 space-y-4">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  type="submit" 
-                  className="w-full py-4 bg-gradient-to-r from-cyan-500 to-violet-600 text-white font-bold rounded-2xl shadow-lg shadow-cyan-500/25 hover:shadow-xl hover:shadow-cyan-500/40 transition-all duration-300 flex items-center justify-center gap-2"
-                >
-                  {mode === "Login" ? "Sign In Now" : "Create Account"}
-                  <Zap className="w-5 h-5 fill-white/20" />
-                </motion.button>
+              <button 
+                type="submit" 
+                disabled={loading}
+                className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-bold rounded-xl shadow-lg shadow-indigo-200 dark:shadow-none transition-all flex items-center justify-center gap-2 mt-4 active:scale-[0.98]"
+              >
+                {loading ? <Loader2 className="animate-spin" size={20} /> : mode}
+                <ChevronRight size={18} />
+              </button>
 
-                <div className="relative py-3 flex items-center justify-center">
-                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-200"></div></div>
-                  <span className="relative px-4 bg-white text-xs font-bold text-gray-400 uppercase tracking-widest">or continue with</span>
-                </div>
-                
-                <motion.button
-                  type="button"
-                  onClick={handleDemoLogin}
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full py-4 border-2 border-cyan-100 text-cyan-600 font-bold rounded-2xl hover:bg-cyan-50/70 hover:border-cyan-300 transition-all duration-300 flex items-center justify-center gap-3"
+              <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-6">
+                {mode === "Login" ? "New to Prescripto?" : "Already have an account?"}{" "}
+                <span 
+                  onClick={() => setMode(mode === "Login" ? "Sign Up" : "Login")}
+                  className="text-indigo-600 dark:text-indigo-400 font-bold cursor-pointer hover:underline"
                 >
-                  <UserCheck className="w-5 h-5" />
-                  Try Demo Access
-                </motion.button>
-              </div>
+                  {mode === "Login" ? "Create one now" : "Sign In"}
+                </span>
+              </p>
             </form>
           </div>
         </div>
-      </motion.div>
 
-      <style>{`
-        @keyframes blob {
-          0% { transform: translate(0px, 0px) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-          100% { transform: translate(0px, 0px) scale(1); }
-        }
-        .animate-blob { animation: blob 10s infinite; }
-        .animation-delay-2000 { animation-delay: 2s; }
-        .shadow-inner-white { box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1); }
-      `}</style>
+      </div>
     </div>
   );
 };

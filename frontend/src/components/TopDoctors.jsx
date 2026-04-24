@@ -1,22 +1,29 @@
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
+import { ChevronRight, Star } from "lucide-react";
 
 const TopDoctors = () => {
   const navigate = useNavigate();
   const { doctors } = useContext(AppContext);
 
   return (
-    <div className="flex flex-col items-center gap-4 my-16 text-gray-900 md:mx-10">
-      <h1 className="text-3xl font-medium">Top Doctors to Book</h1>
-      <p className="sm:w-1/3 text-center text-sm text-gray-600">
-        Simply browse through our extensive list of trusted doctors.
-      </p>
+    <div className="flex flex-col items-center gap-6 my-20 transition-colors duration-500">
+      
+      {/* --- Section Header --- */}
+      <div className="text-center space-y-3">
+        <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
+          Top Doctors to Book
+        </h1>
+        <p className="max-w-md mx-auto text-slate-500 dark:text-slate-400 text-sm md:text-base">
+          Connect with our highest-rated specialists for a seamless healthcare experience.
+        </p>
+      </div>
 
-      {/* Grid */}
-      <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 pt-6 px-3 sm:px-0">
+      {/* --- Professional Grid --- */}
+      {/* Standardized to 8 or 10 for balanced rows (grid-cols-4 or 5) */}
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pt-10 px-4 sm:px-0">
         {doctors.slice(0, 10).map((item) => {
-          // 🔑 SAFE fallback: future-proof
           const isAvailable = item.available ?? true;
 
           return (
@@ -26,37 +33,42 @@ const TopDoctors = () => {
                 navigate(`/appointment/${item._id}`);
                 window.scrollTo(0, 0);
               }}
-              className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer transition-transform duration-300 hover:-translate-y-2"
+              className="group border border-slate-100 dark:border-slate-800 rounded-3xl overflow-hidden cursor-pointer transition-all duration-500 hover:shadow-2xl hover:shadow-indigo-500/10 dark:hover:shadow-none hover:-translate-y-2 bg-white dark:bg-slate-900"
             >
-              {/* Image */}
-              <div className="aspect-square bg-blue-50">
+              {/* Image Container with Medical Overlay */}
+              <div className="aspect-[4/5] bg-indigo-50 dark:bg-slate-800 relative overflow-hidden">
                 <img
                   src={item.image}
                   alt={item.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
+                {/* Subtle rating badge overlay */}
+                <div className="absolute top-3 right-3 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1 shadow-sm">
+                  <Star size={12} className="text-amber-400 fill-amber-400" />
+                  <span className="text-[10px] font-bold dark:text-white">4.9</span>
+                </div>
               </div>
 
-              {/* Content */}
-              <div className="p-4">
-                <div
-                  className={`flex items-center gap-2 text-sm mb-1 ${
-                    isAvailable ? "text-green-500" : "text-gray-500"
-                  }`}
-                >
+              {/* Card Content */}
+              <div className="p-5">
+                <div className="flex items-center gap-2 mb-2">
                   <span
                     className={`w-2 h-2 rounded-full ${
-                      isAvailable ? "bg-green-500" : "bg-gray-500"
+                      isAvailable ? "bg-emerald-500 animate-pulse" : "bg-slate-400"
                     }`}
                   />
-                  <p>{isAvailable ? "Available" : "Not Available"}</p>
+                  <p className={`text-[10px] font-bold uppercase tracking-wider ${
+                    isAvailable ? "text-emerald-600 dark:text-emerald-400" : "text-slate-500"
+                  }`}>
+                    {isAvailable ? "Available Now" : "Currently Busy"}
+                  </p>
                 </div>
 
-                <p className="text-gray-900 text-lg font-medium truncate">
+                <h3 className="text-slate-900 dark:text-white text-lg font-bold leading-tight group-hover:text-indigo-600 transition-colors">
                   {item.name}
-                </p>
-                <p className="text-gray-600 text-sm truncate">
-                  {item.speciality}
+                </h3>
+                <p className="text-slate-500 dark:text-slate-400 text-xs font-medium mt-1">
+                  {item.specialization}
                 </p>
               </div>
             </div>
@@ -64,14 +76,16 @@ const TopDoctors = () => {
         })}
       </div>
 
+      {/* --- Footer Button --- */}
       <button
         onClick={() => {
           navigate("/doctors");
           window.scrollTo(0, 0);
         }}
-        className="bg-blue-50 text-gray-700 px-12 py-3 rounded-full mt-10 hover:bg-blue-100 transition"
+        className="group mt-12 flex items-center gap-2 px-10 py-4 rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 font-bold text-sm hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-all active:scale-95 shadow-sm"
       >
-        View More
+        View Full Network
+        <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
       </button>
     </div>
   );

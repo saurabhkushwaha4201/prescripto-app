@@ -4,6 +4,10 @@ import {
   Users,
   Globe,
   CheckCircle,
+  ShieldCheck,
+  Zap,
+  Star,
+  ArrowRight
 } from "lucide-react";
 import { assets } from "../assets/assets";
 
@@ -11,20 +15,20 @@ import { assets } from "../assets/assets";
 
 const TRUST_STATS = [
   { label: "Clinics onboarded", value: "120+" },
-  { label: "Appointments booked", value: "15K+" },
-  { label: "Avg booking time", value: "2 min" },
+  { label: "Appointments", value: "15K+" },
+  { label: "Avg response", value: "2 min" },
 ];
 
 const TESTIMONIALS = [
   {
-    quote:
-      "Prescripto made booking my family's appointments effortless — simple and reliable.",
-    who: "Anita K., Patient",
+    quote: "Prescripto made booking my family's appointments effortless — simple and reliable.",
+    who: "Anita K.",
+    role: "Patient"
   },
   {
-    quote:
-      "We cut no-shows by 35% after adding Prescripto’s reminder workflows.",
-    who: "Dr. Rohit P., Clinic Owner",
+    quote: "We cut no-shows by 35% after adding Prescripto’s automated reminder workflows.",
+    who: "Dr. Rohit P.",
+    role: "Clinic Owner"
   },
 ];
 
@@ -32,334 +36,217 @@ const TEAM = [
   {
     name: "Saurabh Kumar",
     role: "Founder & CTO",
-    img: assets.team_saurabh,
+    img: assets.team_saurabh || "https://via.placeholder.com/150",
   },
   {
     name: "Priya Sharma",
-    role: "Product",
-    img: assets.team_priya,
+    role: "Product Design",
+    img: assets.team_priya || "https://via.placeholder.com/150",
   },
 ];
-
-/* ---------------- ANIMATIONS ---------------- */
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0 },
-};
-
-const lift = {
-  whileHover: { y: -6, scale: 1.03 },
-  whileTap: { scale: 0.96 },
-};
 
 /* ---------------- PAGE ---------------- */
 
 export default function AboutPage() {
   return (
-    <main className="max-w-7xl mx-auto px-4 py-14 space-y-20">
+    <main className="max-w-7xl mx-auto px-6 py-10 space-y-24 transition-colors duration-300">
 
-      {/* ================= HERO ================= */}
-      <section className="relative overflow-hidden rounded-3xl
-        bg-linear-to-br from-indigo-600 via-violet-800 to-purple-60
-        text-white px-8 py-20 shadow-xl ">
-
-        {/* Decorative blobs */}
-        <div className="absolute -top-24 -left-24 w-80 h-80 bg-pink-400/30 rounded-full blur-3xl" />
-        <div className="absolute top-20 -right-24 w-80 h-80 bg-yellow-400/30 rounded-full blur-3xl" />
-
+      {/* ================= HERO SECTION ================= */}
+      <section className="relative rounded-[2.5rem] bg-indigo-600 dark:bg-indigo-700 text-white px-8 py-20 overflow-hidden shadow-2xl">
+        <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+        
         <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={fadeUp}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative text-center max-w-3xl mx-auto"
+          className="relative z-10 text-center max-w-3xl mx-auto"
         >
-          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
-            Healthcare scheduling that actually works.
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-1.5 rounded-full mb-6">
+            <Sparkles size={14} className="text-indigo-200" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em]">The Future of Patient Care</span>
+          </div>
+
+          <h1 className="text-4xl md:text-6xl font-black leading-tight tracking-tight">
+            Healthcare management <br /> 
+            <span className="text-indigo-200 underline decoration-indigo-400/50 underline-offset-8">reimagined.</span>
           </h1>
 
-          <p className="mt-4 text-lg text-white/90">
-            Book appointments, track visit history, and get reminders —
-            all in one fast, private place.
+          <p className="mt-8 text-lg text-indigo-100 leading-relaxed max-w-2xl mx-auto">
+            We provide a unified infrastructure for clinics to automate scheduling, 
+            reduce administrative burden, and deliver a seamless patient experience.
           </p>
 
-          <div className="mt-10 flex flex-wrap justify-center gap-4">
-            <motion.a
-              {...lift}
-              href="/doctors"
-              className="px-7 py-3 rounded-xl font-semibold text-white
-              bg-linear-to-r from-amber-400 to-orange-500
-              shadow-lg hover:shadow-2xl transition"
-            >
-              Book an appointment
-            </motion.a>
-
-            <motion.a
-              {...lift}
-              href="/Login"
-              className="px-7 py-3 rounded-xl font-semibold
-              bg-white/20 backdrop-blur-md border border-white/30
-              hover:bg-white hover:text-indigo-600 transition"
-            >
-              Create free account
-            </motion.a>
+          <div className="mt-12 flex flex-col sm:flex-row justify-center gap-4">
+            <a href="/doctors" className="px-8 py-4 bg-white text-indigo-600 font-bold rounded-2xl shadow-lg hover:bg-indigo-50 transition-all flex items-center justify-center gap-2">
+              Explore Network <ArrowRight size={18} />
+            </a>
+            <a href="/login" className="px-8 py-4 bg-indigo-500/30 backdrop-blur-md border border-white/20 text-white font-bold rounded-2xl hover:bg-white/20 transition-all">
+              Create Provider Account
+            </a>
           </div>
         </motion.div>
       </section>
 
-      {/* ================= PROBLEM → SOLUTION ================= */}
-      <section className="grid md:grid-cols-2 gap-12 items-center">
-        <motion.img
-          src={assets.about_image}
-          alt="Patient booking appointment"
-          className="rounded-2xl shadow-lg object-cover"
-          initial={{ opacity: 0, scale: 0.96 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        />
-
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={fadeUp}
-          transition={{ duration: 0.5 }}
-        >
-          <h2 className="text-3xl font-bold text-gray-900">
-            Appointments are fragmented and slow.
-          </h2>
-
-          <p className="mt-4 text-gray-600 leading-relaxed">
-            Many patients juggle phone calls, missed messages,
-            and confusing clinic systems. That leads to
-            missed care and wasted time.
-          </p>
-
-          <h3 className="mt-6 font-semibold text-gray-900">
-            How Prescripto helps
-          </h3>
-
-          <ul className="mt-3 space-y-2 text-gray-700">
-            <li className="flex items-center gap-2">
-              <CheckCircle size={16} className="text-indigo-500" />
-              Centralized scheduling
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle size={16} className="text-indigo-500" />
-              Automated reminders & visit history
-            </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle size={16} className="text-indigo-500" />
-              Simple booking on web & mobile
-            </li>
-          </ul>
-
-          <div className="mt-6 flex gap-4">
-            <motion.a
-              {...lift}
-              href="/doctors"
-              className="px-5 py-3 rounded-xl text-white font-semibold
-              bg-linear-to-r from-indigo-600 to-purple-600 shadow-md"
-            >
-              Explore doctors
-            </motion.a>
-
-            <motion.a
-              {...lift}
-              href="/how-it-works"
-              className="px-5 py-3 rounded-xl font-semibold
-              border border-gray-300 text-gray-700
-              hover:bg-gray-100 transition"
-            >
-              How it works
-            </motion.a>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* ================= TRUST ================= */}
-      <section className="rounded-3xl bg-gray-50 p-10">
-        {/* items-stretch ensures all 3 main columns share the same height */}
-        <div className="grid lg:grid-cols-3 gap-8 items-stretch">
-
-          {/* Column 1: Intro & Stats */}
-          <div className="flex flex-col justify-between">
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 leading-tight">
-                Trusted by clinics — built for people
-              </h3>
-
-              <p className="mt-4 text-gray-600">
-                We help clinics reduce no-shows and patients save time.
-                Small teams to larger clinics — Prescripto scales
-                with your needs.
-              </p>
-
-              <div className="mt-8 grid grid-cols-3 gap-4">
-                {TRUST_STATS.map((s, i) => (
-                  <div key={i} className="text-left">
-                    <div className="text-2xl font-bold text-indigo-600">
-                      {s.value}
-                    </div>
-                    <div className="text-xs uppercase tracking-wider font-medium text-gray-500">
-                      {s.label}
-                    </div>
-                  </div>
-                ))}
+      {/* ================= PROBLEM & SOLUTION ================= */}
+      <section className="grid md:grid-cols-2 gap-16 items-center">
+        <div className="relative">
+          <img
+            src={assets.about_image}
+            alt="Healthcare Professional"
+            className="rounded-[2rem] shadow-2xl border-8 border-white dark:border-slate-800 transition-colors"
+          />
+          <div className="absolute -bottom-6 -right-6 bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-xl border dark:border-slate-800 hidden lg:block">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-2xl">
+                <ShieldCheck size={24} />
+              </div>
+              <div>
+                <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Data Privacy</p>
+                <p className="text-sm font-bold text-slate-900 dark:text-white">HIPAA Compliant</p>
               </div>
             </div>
-
-            {/* Badges with improved color note */}
-            <div className="mt-8 flex flex-wrap gap-3">
-              <span className="flex items-center gap-2 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-full text-sm font-medium text-indigo-700 shadow-sm">
-                <Globe size={14} className="text-indigo-500" />
-                Global-ready
-              </span>
-              <span className="flex items-center gap-2 bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-full text-sm font-medium text-blue-700 shadow-sm">
-                <Users size={14} className="text-blue-500" />
-                Clinics & patients
-              </span>
-            </div>
           </div>
+        </div>
 
-          {/* Column 2: Testimonials */}
-          <div className="flex flex-col gap-4">
-            {TESTIMONIALS.map((t, i) => (
-              <motion.blockquote
-                key={i}
-                whileHover={{ scale: 1.02 }}
-                className="flex-1 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center relative"
-              >
-                {/* Accent line moved to a subtle left border or top bar */}
-                <div className="absolute left-0 top-6 bottom-6 w-1 bg-indigo-500 rounded-r-lg" />
-                <p className="italic text-gray-700 text-md leading-relaxed">“{t.quote}”</p>
-                <footer className="mt-4 text-sm font-semibold text-gray-500">
-                  — {t.who}
-                </footer>
-              </motion.blockquote>
+        <div className="space-y-8">
+          <header>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-tight">
+              Eliminating the friction in <br /> medical scheduling.
+            </h2>
+            <p className="mt-6 text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
+              Traditional clinic systems are fragmented. Prescripto bridges the gap 
+              between healthcare providers and patients with a modern, cloud-native platform.
+            </p>
+          </header>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {[
+              { icon: Zap, title: "Real-time Sync", desc: "No more double bookings." },
+              { icon: Users, title: "Patient Portals", desc: "Self-service management." },
+              { icon: Globe, title: "Clinic Network", desc: "Scale across locations." },
+              { icon: CheckCircle, title: "Reminders", desc: "Automated SMS & Email." }
+            ].map((item, i) => (
+              <div key={i} className="flex gap-4 p-4 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors">
+                <item.icon size={20} className="text-indigo-600 shrink-0 mt-1" />
+                <div>
+                  <h4 className="font-bold text-slate-900 dark:text-white">{item.title}</h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{item.desc}</p>
+                </div>
+              </div>
             ))}
           </div>
+        </div>
+      </section>
 
-          {/* Column 3: CTA card */}
-          <motion.div
-            whileHover={{ y: -5 }}
-            className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 flex flex-col justify-center text-center lg:text-left"
-          >
-            <h4 className="text-2xl font-bold text-gray-900">
-              Ready to simplify care?
-            </h4>
-
-            <p className="mt-4 text-gray-600 leading-relaxed">
-              Start free — no credit card required.
-              Book your first appointment in under two minutes.
+      {/* ================= TRUST & STATS ================= */}
+      <section className="bg-slate-100 dark:bg-slate-900 rounded-[2.5rem] p-10 md:p-16 border dark:border-slate-800 transition-colors">
+        <div className="grid lg:grid-cols-12 gap-12">
+          
+          <div className="lg:col-span-5 space-y-8">
+            <h3 className="text-3xl font-bold text-slate-900 dark:text-white">Trusted by clinics — built for people.</h3>
+            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+              We help clinics reduce no-shows by 35% while providing patients a fast, mobile-first experience.
             </p>
-
-            <div className="mt-8">
-              <motion.a
-                {...lift}
-                href="/doctors"
-                className="inline-block w-full text-center px-8 py-4 rounded-xl text-white font-bold
-          bg-linear-to-r from-orange-400 to-orange-600 shadow-lg hover:shadow-orange-200 transition-shadow"
-              >
-                Book appointment
-              </motion.a>
+            
+            <div className="flex gap-10 border-t dark:border-slate-800 pt-8">
+              {TRUST_STATS.map((s, i) => (
+                <div key={i}>
+                  <div className="text-3xl font-black text-indigo-600 dark:text-indigo-400">{s.value}</div>
+                  <div className="text-[10px] font-black uppercase text-slate-400 tracking-widest mt-1">{s.label}</div>
+                </div>
+              ))}
             </div>
-          </motion.div>
+          </div>
+
+          <div className="lg:col-span-7 grid md:grid-cols-2 gap-6">
+            {TESTIMONIALS.map((t, i) => (
+              <div key={i} className="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-sm border dark:border-slate-700 relative group">
+                <Star className="absolute top-8 right-8 text-amber-400 opacity-20 group-hover:opacity-100 transition-opacity" size={24} />
+                <p className="italic text-slate-700 dark:text-slate-300 leading-relaxed text-sm mb-6">"{t.quote}"</p>
+                <div>
+                  <p className="font-bold text-slate-900 dark:text-white">{t.who}</p>
+                  <p className="text-[10px] font-black uppercase text-indigo-500 tracking-wider">{t.role}</p>
+                </div>
+              </div>
+            ))}
+          </div>
 
         </div>
       </section>
 
       {/* ================= TEAM ================= */}
-      <section className="py-5 space-y-7">
-        <div className="text-center space-y-2">
-          <h3 className="text-3xl font-bold text-gray-900">
-            Built by a small team who care
-          </h3>
-          <p className="text-gray-500 max-w-md mx-auto">
-            Real people building tools to make healthcare more accessible for everyone.
+      <section className="text-center space-y-12">
+        <div className="max-w-xl mx-auto">
+          <h3 className="text-3xl font-bold text-slate-900 dark:text-white">Our Leadership</h3>
+          <p className="text-slate-500 dark:text-slate-400 mt-4">
+            A small team of dedicated professionals committed to making healthcare accessible.
           </p>
         </div>
 
-        <div className="flex justify-center gap-6 flex-wrap">
+        <div className="flex justify-center gap-12 flex-wrap">
           {TEAM.map((m, i) => (
             <motion.div
               key={i}
-              whileHover={{ y: -8, shadow: "0 20px 25px -5px rgb(0 0 0 / 0.1)" }}
-              className="group bg-white border border-gray-100 p-6 rounded-2xl w-48 shadow-sm flex flex-col items-center transition-all"
+              whileHover={{ y: -10 }}
+              className="w-56 group"
             >
-              <div className="relative">
-                {/* Decorative ring around image */}
-                <div className="absolute -inset-1 bg-linear-to-tr from-indigo-500 to-purple-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity blur-sm" />
+              <div className="relative mb-6">
+                <div className="absolute inset-0 bg-indigo-600 rounded-[2rem] rotate-6 group-hover:rotate-0 transition-transform duration-300 -z-10" />
                 <img
                   src={m.img}
                   alt={m.name}
-                  className="relative w-24 h-24 rounded-full object-cover border-4 border-white shadow-sm"
+                  className="w-full h-64 object-cover rounded-[2rem] border-4 border-white dark:border-slate-800 shadow-xl"
                 />
               </div>
-
-              <div className="mt-4 text-center">
-                <div className="font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">
-                  {m.name}
-                </div>
-                <div className="text-xs font-medium uppercase tracking-widest text-indigo-500 mt-1">
-                  {m.role}
-                </div>
-              </div>
+              <h4 className="text-lg font-bold text-slate-900 dark:text-white">{m.name}</h4>
+              <p className="text-[10px] font-black uppercase text-indigo-500 tracking-[0.2em] mt-1">{m.role}</p>
             </motion.div>
           ))}
         </div>
       </section>
 
       {/* ================= FINAL CTA ================= */}
-      <section className="relative overflow-hidden rounded-3xl bg-indigo-600 text-white py-12 px-6 lg:py-16 text-center shadow-xl max-w-5xl mx-auto">
-        {/* Decorative Background Elements */}
-        <div className="absolute top-0 left-0 w-48 h-48 bg-white/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-2xl" />
-        <div className="absolute bottom-0 right-0 w-64 h-64 bg-purple-400/20 rounded-full translate-x-1/4 translate-y-1/4 blur-3xl" />
-
-        <div className="relative z-10">
-          <h3 className="text-3xl font-bold tracking-tight">
-            Ready to make scheduling painless?
-          </h3>
-
-          <p className="mt-3 text-indigo-100 max-w-xl mx-auto text-lg">
-            Join 120+ clinics already using Prescripto to automate their
-            workflows and delight their patients.
-          </p>
-
-          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
-            {/* Primary Button */}
-            <motion.a
-              {...lift}
-              href="/Login"
-              className="px-8 py-3.5 rounded-xl bg-white text-indigo-600 font-bold shadow-md hover:bg-indigo-50 transition-colors"
-            >
-              Create free account
-            </motion.a>
-
-            {/* Fixed Talk to Sales Button */}
-            <motion.a
-              whileHover={{
-                backgroundColor: "rgba(255, 255, 255, 0.15)", // Brighter tint for better visibility
-                scale: 1.03, // Slight "pop" effect
-                borderColor: "rgba(255, 255, 255, 0.8)" // Brightens the border on hover
-              }}
-              whileTap={{ scale: 0.97 }} // Feels like a physical button press
-              href="/contact"
-              className="px-8 py-3.5 rounded-xl border-2 border-white/30 text-white font-bold transition-all duration-200 shadow-sm"
-            >
-              Talk to sales
-            </motion.a>
+      <section className="bg-slate-900 dark:bg-indigo-900 rounded-[3rem] p-10 md:p-16 text-center text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        
+        <div className="relative z-10 max-w-2xl mx-auto space-y-8">
+          <h3 className="text-3xl md:text-4xl font-black tracking-tight">Ready to optimize your workflow?</h3>
+          <p className="text-indigo-200 text-lg">Join 120+ providers and start your 14-day free trial today.</p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/login" className="px-10 py-4 bg-white text-slate-900 font-black rounded-2xl hover:scale-105 transition-all shadow-xl">
+              Start Free Trial
+            </a>
+            <a href="/contact" className="px-10 py-4 bg-white/10 border border-white/20 font-black rounded-2xl hover:bg-white/20 transition-all">
+              Schedule Demo
+            </a>
           </div>
-
-          {/* Improved Disclaimer Text */}
-          <p className="mt-8 text-[11px] font-bold tracking-[0.2em] uppercase text-indigo-200/80 font-mono">
-            No credit card required <span className="mx-2 text-white/40">•</span> 14-day free trial
-          </p>
+          
+          <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-[0.3em] pt-4">No Credit Card Required • Trusted Secure HIPAA-Ready</p>
         </div>
       </section>
 
     </main>
+  );
+}
+
+// Utility icon
+function Sparkles({ size, className }) {
+  return (
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width={size} 
+      height={size} 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      className={className}
+    >
+      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+      <path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/>
+    </svg>
   );
 }

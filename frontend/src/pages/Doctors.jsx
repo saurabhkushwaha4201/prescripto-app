@@ -3,17 +3,30 @@ import { useNavigate, useParams } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 
 const Doctors = () => {
-  const { speciality } = useParams();
+  const { specialization } = useParams();
   const [filterDoc, setFilterDoc] = useState([]);
   const [showFilter, setShowFilter] = useState(false);
-
   const navigate = useNavigate();
-
   const { doctors } = useContext(AppContext);
 
+  const categories = [
+    "General physician",
+    "Gynecologist",
+    "Dermatologist",
+    "Pediatricians",
+    "Neurologist",
+    "Gastroenterologist",
+  ];
+
   const applyFilter = () => {
-    if (speciality) {
-      setFilterDoc(doctors.filter((doc) => doc.speciality === speciality));
+    if (specialization) {
+      setFilterDoc(
+        doctors.filter(
+          (doc) =>
+            doc.specialization.toLowerCase().trim() ===
+            specialization.toLowerCase().trim()
+        )
+      );
     } else {
       setFilterDoc(doctors);
     }
@@ -21,147 +34,101 @@ const Doctors = () => {
 
   useEffect(() => {
     applyFilter();
-  }, [doctors, speciality]);
+  }, [doctors, specialization]);
 
   return (
-    <div>
-      <p className="text-gray-600">Browse through the doctors specialist.</p>
-      <div className="flex flex-col sm:flex-row items-start gap-5 mt-5">
+    <div className="pb-20">
+      <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+        Browse through the specialists
+      </h1>
+      <p className="text-gray-500 dark:text-slate-400 mt-1">
+        Select a category to filter by specialization.
+      </p>
+
+      <div className="flex flex-col sm:flex-row items-start gap-8 mt-8">
+        {/* Mobile Filter Toggle */}
         <button
-          className={`py-1 px-3 border rounded text-sm transition-all sm:hidden ${
-            showFilter ? "bg-primary text-white" : ""
+          className={`py-2 px-6 border rounded-lg text-sm font-medium transition-all sm:hidden w-full mb-4 ${
+            showFilter
+              ? "bg-primary text-white border-primary"
+              : "bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-200 border-gray-300 dark:border-slate-700"
           }`}
           onClick={() => setShowFilter((prev) => !prev)}
         >
-          Filters
+          {showFilter ? "Hide Filters" : "Show Filters"}
         </button>
+
+        {/* Sidebar Filters */}
         <div
-          className={`flex-col gap-4 text-sm text-gray-600 ${
-            showFilter ? "flex" : "hidden sm:flex"
+          className={`flex-col gap-3 min-w-[220px] ${
+            showFilter ? "flex w-full" : "hidden sm:flex"
           }`}
         >
-          <p
-            onClick={() =>
-              speciality === "General physician"
-                ? navigate("/doctors")
-                : navigate("/doctors/General physician")
-            }
-            className={`w-[94vw] sm:w-auto pl-3 py-1.5 pr-16 border border-gray-300 rounded transition-all cursor-pointer ${
-              speciality === "General physician"
-                ? "bg-indigo-100 text-black"
-                : ""
-            }`}
-          >
-            General physician
-          </p>
-          <p
-            onClick={() =>
-              speciality === "Gynecologist"
-                ? navigate("/doctors")
-                : navigate("/doctors/Gynecologist")
-            }
-            className={`w-[94vw] sm:w-auto pl-3 py-1.5 pr-16 border border-gray-300 rounded transition-all cursor-pointer ${
-              speciality === "Gynecologist" ? "bg-indigo-100 text-black" : ""
-            }`}
-          >
-            Gynecologist
-          </p>
-          <p
-            onClick={() =>
-              speciality === "Dermatologist"
-                ? navigate("/doctors")
-                : navigate("/doctors/Dermatologist")
-            }
-            className={`w-[94vw] sm:w-auto pl-3 py-1.5 pr-16 border border-gray-300 rounded transition-all cursor-pointer ${
-              speciality === "Dermatologist" ? "bg-indigo-100 text-black" : ""
-            }`}
-          >
-            Dermatologist
-          </p>
-          <p
-            onClick={() =>
-              speciality === "Pediatricians"
-                ? navigate("/doctors")
-                : navigate("/doctors/Pediatricians")
-            }
-            className={`w-[94vw] sm:w-auto pl-3 py-1.5 pr-16 border border-gray-300 rounded transition-all cursor-pointer ${
-              speciality === "Pediatricians" ? "bg-indigo-100 text-black" : ""
-            }`}
-          >
-            Pediatricians
-          </p>
-          <p
-            onClick={() =>
-              speciality === "Neurologist"
-                ? navigate("/doctors")
-                : navigate("/doctors/Neurologist")
-            }
-            className={`w-[94vw] sm:w-auto pl-3 py-1.5 pr-16 border border-gray-300 rounded transition-all cursor-pointer ${
-              speciality === "Neurologist" ? "bg-indigo-100 text-black" : ""
-            }`}
-          >
-            Neurologist
-          </p>
-          <p
-            onClick={() =>
-              speciality === "Gastroenterologist"
-                ? navigate("/doctors")
-                : navigate("/doctors/Gastroenterologist")
-            }
-            className={`w-[94vw] sm:w-auto pl-3 py-1.5 pr-16 border border-gray-300 rounded transition-all cursor-pointer ${
-              speciality === "Gastroenterologist"
-                ? "bg-indigo-100 text-black"
-                : ""
-            }`}
-          >
-            Gastroenterologist
-          </p>
+          {categories.map((cat) => (
+            <p
+              key={cat}
+              onClick={() =>
+                specialization === cat ? navigate("/doctors") : navigate(`/doctors/${cat}`)
+              }
+              className={`w-full pl-4 py-3 pr-10 border rounded-xl transition-all cursor-pointer font-medium text-sm
+                ${
+                  specialization === cat
+                    ? "bg-indigo-50 border-primary text-primary dark:bg-primary/20 dark:text-white dark:border-primary"
+                    : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700"
+                }`}
+            >
+              {cat}
+            </p>
+          ))}
         </div>
-        <div className="w-full grid 
-                grid-cols-1 
-                sm:grid-cols-2 
-                md:grid-cols-3 
-                lg:grid-cols-4 
-                gap-4 gap-y-6">
-              {filterDoc.map((item) => {
-                const isAvailable = item.available ?? true;
 
-                return (
-                  <div
-                    key={item._id}
-                    onClick={() => navigate(`/appointment/${item._id}`)}
-                    className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:-translate-y-2 transition-transform duration-300"
-                  >
-                    <div className="aspect-square bg-blue-50">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-
-                    <div className="p-4">
-                      <div
-                        className={`flex items-center gap-2 text-sm ${
-                          isAvailable ? "text-green-500" : "text-gray-500"
-                        }`}
-                      >
-                        <span
-                          className={`w-2 h-2 rounded-full ${
-                            isAvailable ? "bg-green-500" : "bg-gray-500"
-                          }`}
-                        />
-                        <p>{isAvailable ? "Available" : "Not Available"}</p>
-                      </div>
-
-                      <p className="text-gray-900 text-lg font-medium">{item.name}</p>
-                      <p className="text-gray-600 text-sm">{item.speciality}</p>
-                    </div>
+        {/* Doctors Grid */}
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filterDoc.length > 0 ? (
+            filterDoc.map((item) => {
+              const isAvailable = item.available ?? true;
+              return (
+                <div
+                  key={item._id}
+                  onClick={() => navigate(`/appointment/${item._id}`)}
+                  className="group border border-gray-100 dark:border-slate-700 rounded-2xl overflow-hidden cursor-pointer hover:shadow-2xl hover:shadow-primary/10 dark:hover:shadow-none hover:-translate-y-2 transition-all duration-300 bg-white dark:bg-slate-800"
+                >
+                  <div className="aspect-[4/5] bg-blue-50 dark:bg-slate-700/50 overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
                   </div>
-                );
-              })}
-        </div>
 
+                  <div className="p-5">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span
+                        className={`w-2 h-2 rounded-full ${
+                          isAvailable ? "bg-green-500 animate-pulse" : "bg-gray-400"
+                        }`}
+                      />
+                      <p className={`text-xs font-medium ${isAvailable ? "text-green-500" : "text-gray-500"}`}>
+                        {isAvailable ? "Available" : "Busy"}
+                      </p>
+                    </div>
+
+                    <h3 className="text-gray-900 dark:text-white text-lg font-bold leading-tight">
+                      {item.name}
+                    </h3>
+                    <p className="text-gray-500 dark:text-slate-400 text-sm mt-1">
+                      {item.specialization}
+                    </p>
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <div className="col-span-full py-20 text-center">
+              <p className="text-gray-400 dark:text-slate-500 italic">No doctors found for this category.</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

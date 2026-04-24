@@ -2,63 +2,69 @@ import React from "react";
 import { assets } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { UserPlus, ChevronRight, ShieldCheck } from "lucide-react";
 
 const Banner = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col md:flex-row bg-linear-to-br from-[#5f6FFF] via-[#7042f8] to-[#3b32c4] rounded-2xl px-6 sm:px-10 md:px-14 lg:px-12 my-20 md:mx-10 items-center overflow-hidden shadow-2xl">
+    <div className="relative flex flex-col md:flex-row bg-indigo-600 dark:bg-slate-900 rounded-[2.5rem] px-6 sm:px-10 md:px-14 lg:px-20 my-20 md:mx-10 items-center overflow-hidden shadow-2xl transition-all duration-500 border border-transparent dark:border-slate-800">
       
+      {/* --- Background Decorative Element --- */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] dark:opacity-5"></div>
+      <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+      <div className="absolute bottom-0 left-0 w-40 h-40 bg-indigo-400/20 rounded-full blur-2xl -translate-x-1/2 translate-y-1/2"></div>
+
       {/* ---------- Left Side (Text Content) -------- */}
       <motion.div 
-        initial={{ opacity: 0, x: -30 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5 }}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
         viewport={{ once: true }}
-        className="flex-1 py-10 sm:py-16 md:py-16 lg:py-24 lg:pl-5 text-center md:text-left"
+        className="relative z-10 flex-1 py-12 sm:py-20 lg:py-28 text-center md:text-left"
       >
-        <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight tracking-tight">
-          {/* Forced into 2 lines using a single container and controlled sizing */}
-          <p>Book Appointment With</p>
-          <p className="text-white/90">100+ Trusted Doctors</p>
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-6">
+          <ShieldCheck size={14} className="text-indigo-200" />
+          <span className="text-[10px] font-bold text-white uppercase tracking-[0.2em]">Verified Healthcare Network</span>
         </div>
+
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white leading-[1.1] tracking-tight">
+          Book Appointment With <br />
+          <span className="text-indigo-200">100+ Trusted Doctors</span>
+        </h1>
+        
+        <p className="mt-6 text-indigo-100 text-lg max-w-md font-medium leading-relaxed">
+          Join Prescripto today for a seamless booking experience and secure medical record management.
+        </p>
 
         <button
           onClick={() => {
             navigate("/login");
             window.scrollTo(0, 0);
           }}
-          className="
-            group inline-flex items-center gap-3
-            px-8 py-3.5 rounded-full mt-8
-            text-white font-bold text-sm sm:text-base
-            bg-linear-to-r from-orange-400 via-orange-500 to-orange-600
-            shadow-lg transition-all duration-300 ease-out
-            hover:shadow-orange-500/50 hover:scale-105 hover:-translate-y-1
-            active:scale-95 active:translate-y-0
-          "
+          className="group relative inline-flex items-center gap-3 px-10 py-4 rounded-2xl mt-10 text-indigo-600 font-bold text-sm sm:text-base bg-white shadow-xl shadow-indigo-900/20 hover:shadow-indigo-900/40 hover:-translate-y-1 transition-all active:scale-95"
         >
-          Create account
-          <img
-            src={assets.arrow_icon}
-            alt="arrow"
-            className="w-3 transition-transform duration-300 group-hover:translate-x-1 brightness-0 invert"
-          />
+          <UserPlus size={18} />
+          Create Account
+          <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
         </button>
       </motion.div>
 
       {/* ---------- Right Side (Doctor Image) -------- */}
       <motion.div 
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, ease: "easeOut" }}
+        initial={{ opacity: 0, scale: 0.9 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
         viewport={{ once: true }}
-        className="w-full md:w-1/2 lg:w-100 flex justify-center md:justify-end self-end"
+        className="relative w-full md:w-1/2 flex justify-center md:justify-end self-end pt-10 md:pt-0"
       >
+        {/* Subtle glow behind the doctor */}
+        <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-white/20 blur-[80px] rounded-full"></div>
+        
         <img
-          className="w-3/4 md:w-full h-auto object-contain max-w-md drop-shadow-[0_20px_35px_rgba(0,0,0,0.3)]"
+          className="relative z-10 w-full max-w-md h-auto object-contain drop-shadow-[-20px_20px_50px_rgba(0,0,0,0.3)]"
           src={assets.appointment_img}
-          alt="Doctor Banner"
+          alt="Healthcare Professional"
         />
       </motion.div>
     </div>

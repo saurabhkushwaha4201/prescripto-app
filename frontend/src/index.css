@@ -27,13 +27,23 @@
     background-color: var(--color-primary);
   }
 }
+
 @keyframes gradient {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
-
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
 .animate-gradient {
   animation: gradient 12s ease infinite;
 }
+body {
+  @apply bg-white text-gray-900 transition-colors duration-300;
+}
 
+.dark body {
+  @apply bg-slate-950 text-white;
+}

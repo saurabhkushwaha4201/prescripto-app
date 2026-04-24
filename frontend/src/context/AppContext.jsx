@@ -1,8 +1,8 @@
 import { createContext, useEffect, useState } from "react";
-import { doctors } from "../assets/assets";
 import axios from 'axios'
-export const AppContext = createContext();
 import {toast} from 'react-toastify'
+
+export const AppContext = createContext();
 
 const AppContextProvider = (props) => {
   
@@ -11,6 +11,23 @@ const AppContextProvider = (props) => {
   const [doctors, setDoctors] = useState([]);
   const [token, setToken] = useState(localStorage.getItem('token')? localStorage.getItem('token'):false);
   const [userData, setUserData] = useState(false);
+
+  const [isDark, setIsDark] = useState(
+    localStorage.getItem("theme") === "dark" || false
+  );
+  // Toggle Function
+  const toggleDarkMode = () => setIsDark(prev => !prev);
+
+  // Effect to apply classes
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDark]);
 
   const getDoctorsData = async()=>{
     try {
@@ -28,7 +45,7 @@ const AppContextProvider = (props) => {
 
   const loadUserProfileData = async()=>{
     try {
-      const {data} = await axios.get(backendUrl + '/api/user/getProfile',{headers:{token}});
+      const {data} = await axios.get(backendUrl + '/api/user/getProfile',{headers:{Authorization: `Bearer ${token}`}});
       if(data.success){
         setUserData(data.userData);
 
@@ -36,7 +53,7 @@ const AppContextProvider = (props) => {
         toast.error(data.message);
       }
     } catch (error) {
-      
+      console.log(error);
     }
   }
   const value = {
@@ -44,6 +61,8 @@ const AppContextProvider = (props) => {
     currencySymbol,
     token,setToken,backendUrl,
     userData,setUserData,loadUserProfileData,
+    isDark,
+    setIsDark,toggleDarkMode,
 
   };
 
